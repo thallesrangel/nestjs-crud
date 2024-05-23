@@ -7,22 +7,24 @@ import { NotFoundError } from 'rxjs';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create({ email, name, password }: CreateUserDTO) {
+  async create({ name, email, password, role }: CreateUserDTO) {
     return await this.prisma.user.create({
       data: {
         email,
         name,
         password,
+        role,
       },
       select: {
         id: true,
         name: true,
         email: true,
+        role: true,
       },
     });
   }
 
-  async list() {
+  async read() {
     return this.prisma.user.findMany();
   }
 
@@ -39,6 +41,7 @@ export class UserService {
         id: true,
         email: true,
         name: true,
+        role: true,
       },
     });
   }

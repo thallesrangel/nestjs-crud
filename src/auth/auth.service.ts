@@ -25,9 +25,10 @@ export class AuthService {
           id: user.id,
           name: user.name,
           email: user.email,
+          role: user.role, //?
         },
         {
-          expiresIn: '12h',
+          expiresIn: '7 days',
           subject: String(user.id),
           issuer: 'direct_queue',
           audience: 'login',

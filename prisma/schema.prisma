@@ -13,4 +13,5 @@ model User {
   name  String
   password  String
   deleted Boolean? @default(false)
+  role Int @default(1)
 }

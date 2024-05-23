@@ -1,47 +1,70 @@
-import { Body, Controller, Get, Param, Post, Put, Patch, Delete, ParseIntPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UserService } from './user.service';
-// import { AppService } from './app.service';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/enums/role.enum';
+import { RoleGuard } from 'src/guards/role.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
 
+// AuthGuard verifica se está autenticado
+// Role verifica a permissão
+@UseGuards(AuthGuard, RoleGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(Role.Admin)
   @Post()
-  create(@Body() {email, name, password }: CreateUserDTO) {
-    return this.userService.create({email, name, password});
+  create(@Body() { email, name, password, role }: CreateUserDTO) {
+    return this.userService.create({ name, email, password, role});
   }
 
+  @Roles(Role.Admin)
   @Get()
   read() {
-    return this.userService.list();
+    return this.userService.read();
   }
 
+  @Roles(Role.Admin)
   @Get(':id')
   show(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.show(id)
+    return this.userService.show(id);
   }
 
+  @Roles(Role.Admin)
   @Put(':id')
   updateTotal(@Body() body, @Param() param) {
     return {
-        method: 'Put', 
-        body, 
-        param
+      method: 'Put',
+      body,
+      param,
     };
   }
 
+  @Roles(Role.Admin, Role.User)
   @Patch(':id')
   updatePartial(@Body() body, @Param() param) {
     return {
-        method: 'Patch', 
-        body, 
-        param
+      method: 'Patch',
+      body,
+      param,
     };
   }
 
+  @Roles(Role.Admin)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.delete(id)
+    return this.userService.delete(id);
   }
 }
