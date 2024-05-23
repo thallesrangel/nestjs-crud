@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'NEIW2H#G@rnWhq55t7i5oXiTFwAiGRJz',
+      secret: process.env.JWT_SECRET,
     }),
     UserModule,
     PrismaModule
