@@ -30,13 +30,13 @@ export class UserController {
     return this.userService.create({ name, email, password, role});
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.User)
   @Get()
   read() {
     return this.userService.read();
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.User)
   @Get(':id')
   show(@Param('id', ParseIntPipe) id: number) {
     return this.userService.show(id);
