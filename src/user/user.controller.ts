@@ -62,7 +62,7 @@ export class UserController {
     };
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.User)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.userService.delete(id);
