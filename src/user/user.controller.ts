@@ -24,25 +24,25 @@ import { AuthGuard } from 'src/guards/auth.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.Manager)
   @Post()
   create(@Body() { email, name, password, role }: CreateUserDTO) {
     return this.userService.create({ name, email, password, role});
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.Manager, Role.User)
   @Get()
   read() {
     return this.userService.read();
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.Manager, Role.User)
   @Get(':id')
   show(@Param('id', ParseIntPipe) id: number) {
     return this.userService.show(id);
   }
 
-  @Roles(Role.Admin)
+  @Roles(Role.Admin, Role.Manager)
   @Put(':id')
   updateTotal(@Body() body, @Param() param) {
     return {
@@ -52,7 +52,7 @@ export class UserController {
     };
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.Manager, Role.User)
   @Patch(':id')
   updatePartial(@Body() body, @Param() param) {
     return {
@@ -62,7 +62,7 @@ export class UserController {
     };
   }
 
-  @Roles(Role.Admin, Role.User)
+  @Roles(Role.Admin, Role.Manager, Role.User)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.userService.delete(id);
