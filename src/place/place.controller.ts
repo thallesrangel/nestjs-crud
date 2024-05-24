@@ -1,0 +1,41 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Patch,
+  Delete,
+  ParseIntPipe,
+  UseGuards,
+  Req,
+  Request,
+} from '@nestjs/common';
+import { PlaceService } from './place.service';
+import { Roles } from 'src/decorators/role.decorator';
+import { Role } from 'src/enums/role.enum';
+import { RoleGuard } from 'src/guards/role.guard';
+import { AuthGuard } from 'src/guards/auth.guard';
+import { CreatePlaceDTO } from './dto/create-place.dto';
+
+// AuthGuard verifica se está autenticado
+// Role verifica a permissão
+@UseGuards(AuthGuard, RoleGuard)
+@Controller('places')
+export class PlaceController {
+  constructor(private readonly placeService: PlaceService) {}
+
+  @Roles(Role.Admin, Role.Manager)
+  @Post()
+  create(@Body() { name, show_on_totem, userId }: CreatePlaceDTO) {
+    return this.placeService.create({ name, show_on_totem, userId });
+  }
+
+  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Get()
+  read(@Request() param) {
+    const userId = param.tokenPayload.id
+    return this.placeService.read(userId);
+  }
+}

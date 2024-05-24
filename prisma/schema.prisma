@@ -14,4 +14,13 @@ model User {
   password  String
   deleted Boolean? @default(false)
   role Int @default(1)
+  places  Place[]  // Relacionamento um para muitos com Place
+}
+
+model Place {
+  id    Int     @default(autoincrement()) @id
+  name  String
+  show_on_totem Boolean? @default(false)
+  userId       Int       // Campo da chave estrangeira
+  user         User      @relation(fields: [userId], references: [id])
 }
