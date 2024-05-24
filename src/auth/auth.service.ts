@@ -36,6 +36,7 @@ export class AuthService {
           audience: 'login',
         },
       ),
+      user: user,
     };
   }
 
