@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import { AuthForgetDTO } from './dto/auth-forget.dto';
@@ -7,12 +7,14 @@ import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { UserDecorator } from 'src/decorators/user.decorator';
+import { ClinicService } from 'src/clinic/clinic.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private readonly clinicService: ClinicService,
   ) {}
 
   @Post('login')
@@ -22,7 +24,16 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() body: AuthRegisterDTO) {
-    return this.authService.register(body);
+    const name = body.clinic_name
+    const lastInsert = await this.clinicService.create({name});
+
+    if (!lastInsert || !lastInsert.id) {
+      throw new UnauthorizedException('Não foi possível criar uma clínica');
+    }
+
+    const bodyWithClinicId = { ...body, id_clinic: lastInsert.id };
+
+    return this.authService.register(bodyWithClinicId);
   }
 
   // Send a email to reset your password

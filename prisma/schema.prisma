@@ -7,20 +7,85 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Clinic {
+  id    Int    @id @default(autoincrement())
+  name  String
+  deleted Boolean? @default(false)
+  users               User[]
+  places              Place[]
+  servicePasswordGroups ServicePasswordGroup[]
+  servicePasswords    ServicePassword[]
+  patients            Patient[]
+}
+
 model User {
   id    Int     @default(autoincrement()) @id
+  id_clinic Int
   email String  @unique
   name  String
   password  String
   deleted Boolean? @default(false)
   role Int @default(1)
-  places  Place[]  // Relacionamento um para muitos com Place
+  clinic Clinic @relation(fields: [id_clinic], references: [id])
 }
 
 model Place {
   id    Int     @default(autoincrement()) @id
+  id_clinic Int
   name  String
   show_on_totem Boolean? @default(false)
-  userId       Int       // Campo da chave estrangeira
-  user         User      @relation(fields: [userId], references: [id])
+  deleted Boolean? @default(false)
+  clinic  Clinic @relation(fields: [id_clinic], references: [id])
 }
+
+model ServicePasswordGroup {
+  id        Int                @id @default(autoincrement())
+  id_clinic Int
+  deleted   Boolean            @default(false)
+  created_at DateTime          @default(now())
+  updated_at DateTime?          @updatedAt
+  clinic  Clinic @relation(fields: [id_clinic], references: [id])
+  servicePasswords ServicePassword[] // Relacionamento 1:N
+}
+
+model ServicePassword {
+  id                       Int               @id @default(autoincrement())
+  id_service_password_group Int
+  id_clinic                Int
+  id_patient               Int? // Optional
+  id_place                 Int
+  number                   Int
+  type                     PasswordType
+  status                   PasswordStatus
+  deleted Boolean? @default(false)
+  created_at               DateTime          @default(now())
+  updated_at               DateTime?          @updatedAt
+  clinic  Clinic @relation(fields: [id_clinic], references: [id])
+  servicePasswordGroup     ServicePasswordGroup @relation(fields: [id_service_password_group], references: [id])
+  patient                  Patient?            @relation(fields: [id_patient], references: [id])
+}
+
+model Patient {
+  id              Int               @id @default(autoincrement())
+  id_clinic Int
+  name            String
+  deleted Boolean? @default(false)
+  created_at      DateTime          @default(now())
+  updated_at      DateTime?          @updatedAt
+  clinic  Clinic @relation(fields: [id_clinic], references: [id])
+  servicePasswords ServicePassword[] // Relacionamento 1:N
+}
+
+enum PasswordType {
+  normal
+  preferencial
+}
+
+enum PasswordStatus {
+  aguardando
+  em_atendimento
+  atendida
+}
+
+// npx prisma generate
+// npx prisma migrate dev --name add-new-fields

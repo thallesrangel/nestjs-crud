@@ -6,18 +6,18 @@ import { CreatePlaceDTO } from './dto/create-place.dto';
 export class PlaceService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create({ name, show_on_totem }: CreatePlaceDTO, userId) {
+  async create({ name, show_on_totem }: CreatePlaceDTO, id_clinic) {
     return await this.prisma.place.create({
       data: {
         name,
         show_on_totem,
-        userId,
+        id_clinic,
       },
       select: {
         id: true,
         name: true,
         show_on_totem: true,
-        userId: true,
+        id_clinic: true,
       },
     });
   }
@@ -25,7 +25,7 @@ export class PlaceService {
   async read(id) {
     return this.prisma.place.findMany({
       where: {
-        userId: id,
+        id_clinic: id,
       },
     });
   }

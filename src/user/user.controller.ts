@@ -26,8 +26,8 @@ export class UserController {
 
   @Roles(Role.Admin, Role.Manager)
   @Post()
-  create(@Body() { email, name, password, role }: CreateUserDTO) {
-    return this.userService.create({ name, email, password, role});
+  create(@Body() { id_clinic, email, name, password, role }: CreateUserDTO) {
+    return this.userService.create({ id_clinic, name, email, password, role});
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -62,7 +62,7 @@ export class UserController {
     };
   }
 
-  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Roles(Role.Admin, Role.Manager)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
     return this.userService.delete(id);
