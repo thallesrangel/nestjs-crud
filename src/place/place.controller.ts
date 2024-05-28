@@ -28,14 +28,24 @@ export class PlaceController {
 
   @Roles(Role.Admin, Role.Manager)
   @Post()
-  create(@Body() { name, show_on_totem, userId }: CreatePlaceDTO) {
-    return this.placeService.create({ name, show_on_totem, userId });
+  create(@Body() { name, show_on_totem }: CreatePlaceDTO, @Req() req) {
+    const userId = req.tokenPayload.id;
+
+    return this.placeService.create({ name, show_on_totem }, userId);
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Get()
   read(@Request() param) {
-    const userId = param.tokenPayload.id
+    const userId = param.tokenPayload.id;
+
     return this.placeService.read(userId);
+  }
+
+  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Delete(':id')
+  delete(@Param('id', ParseIntPipe) id: number) {
+
+    return this.placeService.delete(id);
   }
 }

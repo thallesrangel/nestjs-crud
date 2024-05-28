@@ -7,7 +7,4 @@ export class CreatePlaceDTO {
     @IsOptional()
     @IsBoolean()
     show_on_totem: boolean;
-    
-    @IsNumber()
-    userId: number;
 }
