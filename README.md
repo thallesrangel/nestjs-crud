@@ -70,3 +70,10 @@ REQUEST JSON:
 ```
 
 <hr>
+
+
+
+
+
+Ao clicar para emitir uma senha, 
+ele verifica se existe na servicePasswordGroup com deleted 0 (NÃO RESETADO) e utiliza ela como parametro para gerar as senhas sequenciais
