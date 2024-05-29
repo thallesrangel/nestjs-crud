@@ -25,6 +25,7 @@ export class AuthService {
       accesToken: this.jwtService.sign(
         {
           id: user.id,
+          id_clinic: user.id_clinic,
           name: user.name,
           email: user.email,
           role: user.role, //?

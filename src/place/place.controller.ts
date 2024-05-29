@@ -29,20 +29,20 @@ export class PlaceController {
   @Roles(Role.Admin, Role.Manager)
   @Post()
   create(@Body() { name, show_on_totem }: CreatePlaceDTO, @Req() req) {
-    const userId = req.tokenPayload.id;
+    const clinicId = req.tokenPayload.id_clinic;
 
-    return this.placeService.create({ name, show_on_totem }, userId);
+    return this.placeService.create(clinicId, { name, show_on_totem });
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Get()
   read(@Request() param) {
-    const userId = param.tokenPayload.id;
+    const clinicId = param.tokenPayload.id_clinic;
 
-    return this.placeService.read(userId);
+    return this.placeService.read(clinicId);
   }
 
-  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Roles(Role.Admin, Role.Manager)
   @Delete(':id')
   delete(@Param('id', ParseIntPipe) id: number) {
 
