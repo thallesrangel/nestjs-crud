@@ -7,6 +7,7 @@ export class CreateServicePasswordDTO {
     @IsNumber()
     id_service_password_group?: number;
 
+    @IsOptional()
     @IsNumber()
     id_clinic: number;
 

@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { PlaceModule } from './place/place.module';
 import { ServicePasswordModule } from './servicePassword/service-password.module';
+import { servicePasswordGroupModule } from './servicePasswordGroup/service-password-group.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ServicePasswordModule } from './servicePassword/service-password.module
     forwardRef(() => AuthModule),
     forwardRef(() => PlaceModule),
     forwardRef(() => ServicePasswordModule),
+    forwardRef(() => servicePasswordGroupModule),
   ],
   controllers: [AppController],
   providers: [AppService],

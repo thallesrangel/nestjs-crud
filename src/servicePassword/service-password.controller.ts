@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 
 import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/role.enum';
@@ -20,8 +20,10 @@ export class ServicePasswordController {
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post()
-  async create(@Body() { id_clinic, id_patient, id_place }: CreateServicePasswordDTO) {
+  async create(@Body() { id_patient, id_place }: CreateServicePasswordDTO, @Req() req) {
 
+    const id_clinic = req.tokenPayload.id_clinic;
+    
     // Verifica se existe um grupo ativo (deleted = false) para a clinica
     const checkExistsServicePasswordGroupActive = await this.servicePasswordGroupService.existis(id_clinic);
   

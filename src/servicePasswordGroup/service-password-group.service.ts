@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateServicePasswordGroupDTO } from './dto/create-service-password-group.dto';
+import { ResetServicePasswordGroupDTO } from './dto/reset-service-password-group.dto';
 
 @Injectable()
 export class ServicePasswordGroupService {
@@ -34,5 +35,16 @@ export class ServicePasswordGroupService {
     }
   
     return record;
+  }
+
+  async reset({ id_clinic }: ResetServicePasswordGroupDTO) {
+    return await this.prisma.servicePasswordGroup.updateMany({
+      where: {
+        id_clinic,
+      },
+      data: {
+        deleted: true,
+      },
+    });
   }
 }
