@@ -9,6 +9,7 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UserService } from './user.service';
@@ -26,8 +27,20 @@ export class UserController {
 
   @Roles(Role.Admin, Role.Manager)
   @Post()
-  create(@Body() { id_clinic, email, name, password, role }: CreateUserDTO) {
-    return this.userService.create({ id_clinic, name, email, password, role});
+  create(
+    @Body() { name, email, password, role, guiche }: CreateUserDTO, @Request() param
+  ) {
+
+    const clinicId = param.tokenPayload.id_clinic;
+
+    return this.userService.create({
+      id_clinic: clinicId,
+      name,
+      email,
+      password,
+      role,
+      guiche,
+    });
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)

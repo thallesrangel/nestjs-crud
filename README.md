@@ -39,7 +39,7 @@ $ npm run test:cov
 ## FLUXO
 
 
-Usuários ao se regritar
+### Usuários ao se regritar
 
 ```
 URL: localhost:3001/auth/register
@@ -77,3 +77,8 @@ REQUEST JSON:
 
 Ao clicar para emitir uma senha, 
 ele verifica se existe na servicePasswordGroup com deleted 0 (NÃO RESETADO) e utiliza ela como parametro para gerar as senhas sequenciais
+
+
+### Resetar senhas
+```service_password_groups/reset```
+Reseta todas as senhas, simplismente pega o id_clinic da sessão e coloca todos como deleted TRUE, quando for criado uma nova senha, ele verifica que não tem um grupo com deleted false e crie um novo grupo de senhas, as novas senhas irão usar esse grupo.

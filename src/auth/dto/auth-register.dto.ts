@@ -23,4 +23,8 @@ export class AuthRegisterDTO {
     @IsOptional()
     @IsEnum(Role)
     role: number;
+
+    @IsOptional()
+    @IsString()
+    guiche?: string;
 }

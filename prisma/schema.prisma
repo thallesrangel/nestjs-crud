@@ -26,6 +26,7 @@ model User {
   password  String
   deleted Boolean? @default(false)
   role Int @default(1)
+  guiche  String?
   clinic Clinic @relation(fields: [id_clinic], references: [id])
 }
 

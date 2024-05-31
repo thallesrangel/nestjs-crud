@@ -7,7 +7,7 @@ import * as bycrypt from 'bcrypt';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create({ id_clinic, name, email, password, role }: CreateUserDTO) {
+  async create({ id_clinic, name, email, password, role, guiche }: CreateUserDTO) {
 
     password = await bycrypt.hash(password, await bycrypt.genSalt())
 
@@ -18,6 +18,7 @@ export class UserService {
         name,
         password,
         role,
+        guiche,
       },
       select: {
         id: true,
@@ -25,6 +26,7 @@ export class UserService {
         name: true,
         email: true,
         role: true,
+        guiche: true,
       },
     });
   }
@@ -47,6 +49,7 @@ export class UserService {
         email: true,
         name: true,
         role: true,
+        guiche: true,
       },
     });
   }

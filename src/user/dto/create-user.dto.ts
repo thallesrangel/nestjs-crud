@@ -18,6 +18,10 @@ export class CreateUserDTO {
     @IsOptional()
     @IsEnum(Role)
     role: number;
+
+    @IsOptional()
+    @IsString()
+    guiche?: string;
 }
 
 // 10:54 - aula43
