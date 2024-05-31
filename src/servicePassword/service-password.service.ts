@@ -14,6 +14,7 @@ export class ServicePasswordService {
     id_patient,
     id_place,
     number,
+    type,
   }: CreateServicePasswordDTO) {
     const data = {
       id_service_password_group,
@@ -21,7 +22,7 @@ export class ServicePasswordService {
       id_patient: id_patient ?? null,
       id_place,
       number,
-      type: PasswordType.normal,
+      type,
       status: PasswordStatus.aguardando,
     };
 

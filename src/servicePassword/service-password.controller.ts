@@ -20,8 +20,8 @@ export class ServicePasswordController {
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post()
-  async create(@Body() { id_patient, id_place }: CreateServicePasswordDTO, @Req() req) {
-
+  async create(@Body() { id_patient, id_place, type }: CreateServicePasswordDTO, @Req() req) {
+    
     const id_clinic = req.tokenPayload.id_clinic;
     
     // Verifica se existe um grupo ativo (deleted = false) para a clinica
@@ -54,6 +54,7 @@ export class ServicePasswordController {
       id_patient: id_patient ?? null,
       id_place,
       number: nextPasswordNumber,
+      type
     });
   }
 }
