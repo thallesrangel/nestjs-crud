@@ -61,4 +61,98 @@ export class ServicePasswordService {
 
     return lastData;
   }
+
+  async show(id: number) {
+    const record = await this.prisma.servicePassword.findFirst({
+      where: {
+        id,
+        deleted: false,
+      },
+      include: {
+        patient: true,
+        clinic: true,
+        servicePasswordGroup: true,
+      }
+    });
+  
+    if (!record) {
+      return false;
+    }
+  
+    return record;
+  }
+
+  async getAllPasswordsAwaitingServiceByPlace(id_clinic: number, id_place: number) {
+    return this.prisma.servicePassword.findMany({
+      where: {
+        id_clinic,
+        id_place,
+        servicePasswordGroup: {
+          deleted: false,
+        },
+        status: PasswordStatus.aguardando
+      },
+      orderBy: {
+        number: 'asc',
+      },
+    });
+  }
+
+  async setStatusEmAtendimento(id: number) {
+    return await this.prisma.servicePassword.update({
+      where: {
+        id,
+      },
+      data: {
+        status: PasswordStatus.em_atendimento,
+      },
+    });
+  }
+
+  async setStatusServiced(id_password_service: number) {
+    return await this.prisma.servicePassword.update({
+      where: {
+        id: id_password_service,
+      },
+      data: {
+        status: PasswordStatus.atendida,
+      },
+    });
+  }
+
+  async getAtualSenhaEmAtendimento(id_clinic: number, id_place: number) {
+    const record = await this.prisma.servicePassword.findFirst({
+      where: {
+        id_clinic,
+        id_place,
+        servicePasswordGroup: {
+          deleted: false,
+        },
+        status: PasswordStatus.em_atendimento
+      },
+      include: {
+        patient: true,
+        clinic: true,
+        servicePasswordGroup: true,
+      }
+    });
+  
+    if (!record) {
+      return false;
+    }
+  
+    return record;
+  }
+
+  async setStatusAwaitingServiceNewPlace(id_password_service, id_place) {
+    return await this.prisma.servicePassword.update({
+      where: {
+        id: id_password_service,
+      },
+      data: {
+        id_place: id_place,
+        status: PasswordStatus.aguardando,
+      },
+    });
+  }
 }

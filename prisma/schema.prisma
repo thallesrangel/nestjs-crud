@@ -16,6 +16,7 @@ model Clinic {
   servicePasswordGroups ServicePasswordGroup[]
   servicePasswords    ServicePassword[]
   patients            Patient[]
+  servicePasswordLog ServicePasswordLog[]
 }
 
 model User {
@@ -37,6 +38,7 @@ model Place {
   show_on_totem Boolean? @default(false)
   deleted Boolean? @default(false)
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
+  servicePasswordLog ServicePasswordLog[]
 }
 
 model ServicePasswordGroup {
@@ -47,6 +49,7 @@ model ServicePasswordGroup {
   updated_at DateTime?          @updatedAt
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
   servicePasswords ServicePassword[] // Relacionamento 1:N
+  servicePasswordLog ServicePasswordLog[]
 }
 
 model ServicePassword {
@@ -64,6 +67,27 @@ model ServicePassword {
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
   servicePasswordGroup     ServicePasswordGroup @relation(fields: [id_service_password_group], references: [id])
   patient                  Patient?            @relation(fields: [id_patient], references: [id])
+  servicePasswordLog ServicePasswordLog[]
+}
+
+model ServicePasswordLog {
+  id                          Int              @id @default(autoincrement())
+  id_clinic                   Int
+  id_service_password_group   Int
+  id_service_password         Int
+  id_patient                  Int?
+  id_place                    Int
+  number                      Int
+  type                        PasswordTypeLog
+  deleted                     Boolean?         @default(false)
+  created_at                  DateTime         @default(now())
+  updated_at                  DateTime?        @updatedAt
+
+  clinic                      Clinic            @relation(fields: [id_clinic], references: [id])
+  servicePasswordGroup        ServicePasswordGroup @relation(fields: [id_service_password_group], references: [id])
+  servicePassword             ServicePassword   @relation(fields: [id_service_password], references: [id])
+  patient                     Patient?          @relation(fields: [id_patient], references: [id])
+  place                       Place             @relation(fields: [id_place], references: [id])
 }
 
 model Patient {
@@ -75,9 +99,15 @@ model Patient {
   updated_at      DateTime?          @updatedAt
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
   servicePasswords ServicePassword[] // Relacionamento 1:N
+  servicePasswordLog ServicePasswordLog[]
 }
 
 enum PasswordType {
+  normal
+  preferencial
+}
+
+enum PasswordTypeLog {
   normal
   preferencial
 }

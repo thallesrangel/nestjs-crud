@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PlaceModule } from './place/place.module';
 import { ServicePasswordModule } from './servicePassword/service-password.module';
 import { servicePasswordGroupModule } from './servicePasswordGroup/service-password-group.module';
+import { ServicePasswordLogModule } from './servicePasswordLog/service-password-log.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import { servicePasswordGroupModule } from './servicePasswordGroup/service-passw
     forwardRef(() => PlaceModule),
     forwardRef(() => ServicePasswordModule),
     forwardRef(() => servicePasswordGroupModule),
+    forwardRef(() => ServicePasswordLogModule),
+
   ],
   controllers: [AppController],
   providers: [AppService],
