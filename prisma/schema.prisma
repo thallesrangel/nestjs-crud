@@ -38,6 +38,7 @@ model Place {
   show_on_totem Boolean? @default(false)
   deleted Boolean? @default(false)
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
+  ServicePassword ServicePassword[]
   servicePasswordLog ServicePasswordLog[]
 }
 
@@ -67,6 +68,7 @@ model ServicePassword {
   clinic  Clinic @relation(fields: [id_clinic], references: [id])
   servicePasswordGroup     ServicePasswordGroup @relation(fields: [id_service_password_group], references: [id])
   patient                  Patient?            @relation(fields: [id_patient], references: [id])
+  place                    Place             @relation(fields: [id_place], references: [id])
   servicePasswordLog ServicePasswordLog[]
 }
 

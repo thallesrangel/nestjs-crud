@@ -134,6 +134,7 @@ export class ServicePasswordService {
         patient: true,
         clinic: true,
         servicePasswordGroup: true,
+        place: true
       }
     });
   

@@ -5,7 +5,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ServicePasswordServiceLog {
   constructor(private readonly prisma: PrismaService) {}
   
-  
+  async getAllByClinicId(id_clinic: number) {
+    return await this.prisma.servicePasswordLog.findMany({
+      where: {
+        id_clinic,
+        deleted: false,
+      },
+      include: {
+        patient: true,
+        place: true,
+      }
+    });
+  }
+
   async create({
     id_clinic,
     id_service_password_group,

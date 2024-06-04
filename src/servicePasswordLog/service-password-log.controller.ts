@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Get,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -28,6 +30,15 @@ export class ServicePasswordLogController {
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
     // private readonly servicePasswordGroupService: ServicePasswordGroupService,
   ) {}
+
+  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Get('password_history')
+  async getAllByClinicId(@Req() req) {
+
+    const clinicId = req.tokenPayload.id_clinic;
+
+    return this.servicePasswordServiceLog.getAllByClinicId(clinicId);
+  }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post()
