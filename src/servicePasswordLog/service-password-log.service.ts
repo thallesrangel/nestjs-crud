@@ -24,6 +24,7 @@ export class ServicePasswordServiceLog {
     id_service_password,
     id_patient,
     id_place,
+    guiche,
     number,
     type,
   }) {
@@ -31,6 +32,7 @@ export class ServicePasswordServiceLog {
     const data = {
       number,
       type,
+      guiche,
       clinic: { connect: { id: id_clinic } },
       servicePasswordGroup: { connect: { id: id_service_password_group } },
       servicePassword: { connect: { id: id_service_password } },

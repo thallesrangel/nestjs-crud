@@ -97,7 +97,6 @@ export class ServicePasswordController {
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('being_served_by_place')
   async beingServed(@Body() { id_place }, @Req() req) {
-
     const id_clinic = req.tokenPayload.id_clinic;
 
     const senhaAtualEmAtendimento =
@@ -109,8 +108,6 @@ export class ServicePasswordController {
     return senhaAtualEmAtendimento;
   }
 
-
-  
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('set_status_serviced_by_id')
   async setStatusServiced(@Body() { id_password_service }) {
@@ -126,15 +123,9 @@ export class ServicePasswordController {
     return serviced;
   }
 
-
-
-
-
-
-
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('call_next_password')
-  async callNextPassword(@Body() { id_place }, @Req() req) {
+  async callNextPassword(@Body() { id_place, guiche }, @Req() req) {
     const id_clinic = req.tokenPayload.id_clinic;
 
     // Retorna todas as senhas com o grupo ativo e com status "aguardando" do place selecionado
@@ -183,6 +174,7 @@ export class ServicePasswordController {
     if (nextPreferencialPassword) {
       await await this.servicePasswordService.setStatusEmAtendimento(
         nextPreferencialPassword.id,
+        guiche,
       );
 
       //TODO colocar status em atendido a senha se não enviado
@@ -190,6 +182,7 @@ export class ServicePasswordController {
     } else if (nextNormalPassword) {
       await await this.servicePasswordService.setStatusEmAtendimento(
         nextNormalPassword.id,
+        guiche,
       );
 
       //TODO colocar status em atendido as senhas anteriores

@@ -98,13 +98,14 @@ export class ServicePasswordService {
     });
   }
 
-  async setStatusEmAtendimento(id: number) {
+  async setStatusEmAtendimento(id: number, guiche: string) {
     return await this.prisma.servicePassword.update({
       where: {
         id,
       },
       data: {
         status: PasswordStatus.em_atendimento,
+        guiche: guiche ? guiche : null
       },
     });
   }

@@ -29,6 +29,7 @@ export class AuthService {
           name: user.name,
           email: user.email,
           role: user.role, //?
+          guiche: user.guiche,
         },
         {
           expiresIn: '2 days',

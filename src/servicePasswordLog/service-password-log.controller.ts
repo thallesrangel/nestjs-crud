@@ -42,7 +42,7 @@ export class ServicePasswordLogController {
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post()
-  async create(@Body() { id_password_service, id_place }) {
+  async create(@Body() { id_password_service, id_place, guiche}) {
     // Vou pegar o id_service_password e todas as suas infos, e duplicar para uma tabela de password_logs
     // Após duplicar o registro, apenas vou alterar o place_id da senha atual para um novo, trocar o status para "aguardando" e redirect true.
     const checkExistsServicePasswordActive =
@@ -59,6 +59,7 @@ export class ServicePasswordLogController {
       id_service_password: checkExistsServicePasswordActive.id,
       id_patient: checkExistsServicePasswordActive.id_patient ?? null,
       id_place: checkExistsServicePasswordActive.id_place,
+      guiche,
       number: checkExistsServicePasswordActive.number,
       type: checkExistsServicePasswordActive.type as PasswordTypeLog,
     });

@@ -59,6 +59,7 @@ model ServicePassword {
   id_clinic                Int
   id_patient               Int? // Optional
   id_place                 Int
+  guiche  String?
   number                   Int
   type                     PasswordType
   status                   PasswordStatus
@@ -79,7 +80,8 @@ model ServicePasswordLog {
   id_service_password         Int
   id_patient                  Int?
   id_place                    Int
-  number                      Int
+  guiche  String?
+  number                      Int 
   type                        PasswordTypeLog
   deleted                     Boolean?         @default(false)
   created_at                  DateTime         @default(now())
