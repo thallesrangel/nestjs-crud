@@ -14,7 +14,11 @@ export class ServicePasswordServiceLog {
       include: {
         patient: true,
         place: true,
-      }
+      },
+      orderBy: {
+        id: 'desc',
+      },
+      take: 5
     });
   }
 

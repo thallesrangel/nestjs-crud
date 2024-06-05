@@ -76,24 +76,6 @@ export class ServicePasswordController {
     });
   }
 
-  // @Roles(Role.Admin, Role.Manager, Role.User)
-  // @Post('awaiting for service_by_place')
-  // async awaitForServiceByPlace(
-  //   @Body() { id_place },
-  //   @Req() req,
-  // ) {
-
-  //   const id_clinic = req.tokenPayload.id_clinic;
-
-  //   // Retorna todas as senhas com o grupo ativo e com status "aguardando" do place selecionado
-  //   const allPasswordsAwaitingService = await this.servicePasswordService.getAllPasswordsAwaitingServiceByPlace(
-  //     Number(id_clinic),
-  //     Number(id_place)
-  //   );
-
-  //   return allPasswordsAwaitingService;
-  // }
-
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('being_served_by_place')
   async beingServed(@Body() { id_place }, @Req() req) {
@@ -194,7 +176,7 @@ export class ServicePasswordController {
 
     return true;
   }
-}
+
 
 // ESTADO: AGUARDANDO / EM ATENDIMENTO/ ATENDIDO
 
@@ -208,3 +190,33 @@ export class ServicePasswordController {
 // Se eu encerrar o atendimento, vira ATENDIDO
 // Se eu NÃO direcionar o paciente e clicar em chamar pŕoximo, vira ATENDIDO
 // Se eu direcionar a senha, ele volta para AGUARDANDO só que com o ID do place novo, com updated_at E preenche a tabela password_service_log com os dados anteriores que fica sendo o histórico de chamadas
+
+
+
+
+
+
+
+
+
+
+
+  // @Roles(Role.Admin, Role.Manager, Role.User)
+  // @Post('count_awaiting_for_service_by_place')
+  // async countAwaitForServiceByPlace(
+  //   @Body() { id_place },
+  //   @Req() req,
+  // ) {
+
+  //   const id_clinic = req.tokenPayload.id_clinic;
+
+  //   // Retorna todas as senhas com o grupo ativo e com status "aguardando" do place selecionado
+  //   const allPasswordsAwaitingService = await this.servicePasswordService.getAllPasswordsAwaitingServiceByPlace(
+  //     Number(id_clinic),
+  //     Number(id_place)
+  //   );
+
+  //   return allPasswordsAwaitingService;
+  // }
+}
+
