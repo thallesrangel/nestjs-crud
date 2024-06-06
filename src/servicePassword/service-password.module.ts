@@ -6,6 +6,7 @@ import { ServicePasswordController } from './service-password.controller';
 import { ServicePasswordService } from './service-password.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-password-group.module';
+import { ServicePasswordLogModule } from 'src/servicePasswordLog/service-password-log.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-pas
     PrismaModule,
     forwardRef(() => AuthModule),
     forwardRef(() => servicePasswordGroupModule),
+    forwardRef(() =>  ServicePasswordLogModule),
   ],
 
   controllers: [ServicePasswordController],

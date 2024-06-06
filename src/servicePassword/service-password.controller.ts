@@ -17,6 +17,8 @@ import { ServicePasswordService } from './service-password.service';
 import { ServicePasswordGroupService } from 'src/servicePasswordGroup/service-password-group.service';
 import { PasswordStatus } from '@prisma/client';
 import { PasswordType } from 'src/enums/service-password-type.enum';
+import { ServicePasswordServiceLog } from 'src/servicePasswordLog/service-password-log.service';
+import { PasswordTypeLog } from 'src/enums/service-password-type-log.enum';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -26,6 +28,7 @@ export class ServicePasswordController {
   constructor(
     private readonly servicePasswordService: ServicePasswordService,
     private readonly servicePasswordGroupService: ServicePasswordGroupService,
+    private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
   ) {}
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -91,18 +94,36 @@ export class ServicePasswordController {
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
-  @Post('set_status_serviced_by_id')
-  async setStatusServiced(@Body() { id_password_service }) {
-    const serviced =
+  @Post('finish')
+  async finishPassword(@Body() { id_password_service }) {
+    const finished =
       await this.servicePasswordService.setStatusServiced(id_password_service);
 
-    if (!serviced) {
-      throw new BadRequestException(
-        'Não foi possível encerrar o atendimento. Tente novamente',
-      );
-    }
+      if (!finished) {
+        throw new BadRequestException(
+          'Não foi possível encerrar o atendimento. Tente novamente',
+        );
+      }
+      
+      const createLog = await this.servicePasswordServiceLog.create({
+        id_clinic: finished.id_clinic,
+        id_service_password_group:
+        finished.id_service_password_group,
+        id_service_password: finished.id,
+        id_patient: finished.id_patient,
+        id_place: finished.id_place,
+        guiche: finished.guiche,
+        number: finished.number,
+        type: finished.type as PasswordTypeLog,
+      });
 
-    return serviced;
+      if (!createLog) {
+        throw new BadRequestException(
+          'Atendimento encerrado mas não foi possível registrar no histórico.',
+        );
+      }
+
+    return true;
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
