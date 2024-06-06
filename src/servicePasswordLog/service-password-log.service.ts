@@ -41,8 +41,12 @@ export class ServicePasswordServiceLog {
       servicePasswordGroup: { connect: { id: id_service_password_group } },
       servicePassword: { connect: { id: id_service_password } },
       place: { connect: { id: id_place } },
-      patient: { connect: { id: id_patient } }
+      patient: undefined,
     };
+
+    if (id_patient) {
+      data.patient = { connect: { id: id_patient } };
+    }
 
     return await this.prisma.servicePasswordLog.create({
       data: data as any

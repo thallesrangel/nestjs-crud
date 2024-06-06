@@ -73,7 +73,6 @@ export class ServicePasswordLogController {
       patientId = null;
     }
     
-    console.log(patientId)
 
     const createLog = await this.servicePasswordServiceLog.create({
       id_clinic: checkExistsServicePasswordActive.clinic.id,
