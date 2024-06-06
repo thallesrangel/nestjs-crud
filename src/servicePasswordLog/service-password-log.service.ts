@@ -10,6 +10,9 @@ export class ServicePasswordServiceLog {
       where: {
         id_clinic,
         deleted: false,
+        servicePasswordGroup: {
+          deleted: false,
+        },
       },
       include: {
         patient: true,
