@@ -19,6 +19,7 @@ import { ServicePasswordGroupService } from 'src/servicePasswordGroup/service-pa
 import { ServicePasswordService } from 'src/servicePassword/service-password.service';
 import { PasswordStatus } from '@prisma/client';
 import { PasswordTypeLog } from 'src/enums/service-password-type-log.enum';
+import { PatientService } from 'src/patient/patient.service';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -28,6 +29,7 @@ export class ServicePasswordLogController {
   constructor(
     private readonly servicePasswordService: ServicePasswordService,
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
+    private readonly patientService: PatientService,
     // private readonly servicePasswordGroupService: ServicePasswordGroupService,
   ) {}
 
@@ -42,7 +44,7 @@ export class ServicePasswordLogController {
 
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post()
-  async create(@Body() { id_password_service, id_place, guiche}) {
+  async create(@Body() { id_password_service, id_place, guiche, patient_name }) {
     // Vou pegar o id_service_password e todas as suas infos, e duplicar para uma tabela de password_logs
     // Após duplicar o registro, apenas vou alterar o place_id da senha atual para um novo, trocar o status para "aguardando" e redirect true.
     const checkExistsServicePasswordActive =
@@ -52,12 +54,33 @@ export class ServicePasswordLogController {
       throw new UnauthorizedException('Não foi possível encontrar a senha.');
     }
 
+    var patientId: number;
+
+    if (!checkExistsServicePasswordActive.id_patient && patient_name && patient_name.trim() !== '') {
+
+      const createPatientDTO = {
+        id_clinic: checkExistsServicePasswordActive.clinic.id,
+        name: patient_name
+      };
+
+      const patient = await this.patientService.create(createPatientDTO);
+
+      patientId = patient.id;
+      
+    } else if (checkExistsServicePasswordActive.id_patient) {
+      patientId = checkExistsServicePasswordActive.id_patient;
+    } else {
+      patientId = null;
+    }
+    
+    console.log(patientId)
+
     const createLog = await this.servicePasswordServiceLog.create({
       id_clinic: checkExistsServicePasswordActive.clinic.id,
       id_service_password_group:
         checkExistsServicePasswordActive.id_service_password_group,
       id_service_password: checkExistsServicePasswordActive.id,
-      id_patient: checkExistsServicePasswordActive.id_patient ?? null,
+      id_patient: patientId,
       id_place: checkExistsServicePasswordActive.id_place,
       guiche,
       number: checkExistsServicePasswordActive.number,

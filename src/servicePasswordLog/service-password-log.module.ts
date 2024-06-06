@@ -7,6 +7,7 @@ import { ServicePasswordServiceLog } from './service-password-log.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { ServicePasswordModule } from 'src/servicePassword/service-password.module';
 import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-password-group.module';
+import { PatientModule } from 'src/patient/patient.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-pas
     forwardRef(() => AuthModule),
     forwardRef(() => ServicePasswordModule),
     forwardRef(() => servicePasswordGroupModule),
+    forwardRef(() => PatientModule),
   ],
 
   controllers: [ServicePasswordLogController],

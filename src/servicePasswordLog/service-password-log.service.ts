@@ -40,7 +40,8 @@ export class ServicePasswordServiceLog {
       clinic: { connect: { id: id_clinic } },
       servicePasswordGroup: { connect: { id: id_service_password_group } },
       servicePassword: { connect: { id: id_service_password } },
-      place: { connect: { id: id_place } }
+      place: { connect: { id: id_place } },
+      patient: { connect: { id: id_patient } }
     };
 
     return await this.prisma.servicePasswordLog.create({
