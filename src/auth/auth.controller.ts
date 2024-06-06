@@ -48,13 +48,11 @@ export class AuthController {
     return this.authService.reset(password, token);
   }
 
-
   @UseGuards(AuthGuard)
   @Post('me')
   async me(@UserDecorator() user) {
     return {user}
   } 
-
 
   // @UseGuards(AuthGuard)
   // @Post('me')

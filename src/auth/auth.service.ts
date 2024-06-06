@@ -4,7 +4,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthRegisterDTO } from './dto/auth-register.dto';
 import { UserService } from 'src/user/user.service';
@@ -30,6 +29,7 @@ export class AuthService {
           email: user.email,
           role: user.role, //?
           guiche: user.guiche,
+          clinic: user.clinic,
         },
         {
           expiresIn: '2 days',
@@ -69,6 +69,9 @@ export class AuthService {
       where: {
         email,
       },
+      include: {
+        clinic: true,
+      }
     });
 
     if (!user) {
@@ -93,13 +96,13 @@ export class AuthService {
       throw new UnauthorizedException('E-mail incorreto.');
     }
 
-    // Enviar email
+    //TODO Enviar email aqui
     return user;
   }
 
   async reset(password: string, token: string) {
-    // validando o token, troco a senha
-    // Token possui ID
+    //TODO validando o token, troco a senha
+    //TODO Token possui ID
     const id = 0;
 
     const user = await this.prisma.user.update({
@@ -115,6 +118,10 @@ export class AuthService {
   }
 
   async register(data: AuthRegisterDTO) {
+    return await this.userService.create(data);
+  }
+
+  async registerPublic(data: AuthRegisterDTO) {
     const user = await this.userService.create(data);
 
     return this.createToken(user);

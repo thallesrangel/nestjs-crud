@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UserService } from './user.service';
@@ -28,9 +29,9 @@ export class UserController {
   @Roles(Role.Admin, Role.Manager)
   @Post()
   create(
-    @Body() { name, email, password, role, guiche }: CreateUserDTO, @Request() param
+    @Body() { name, email, password, role, guiche }: CreateUserDTO,
+    @Request() param,
   ) {
-
     const clinicId = param.tokenPayload.id_clinic;
 
     return this.userService.create({
@@ -43,10 +44,15 @@ export class UserController {
     });
   }
 
-  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Roles(Role.Admin, Role.Manager)
   @Get()
-  read() {
-    return this.userService.read();
+  read(@Req() req) {
+    let id_clinic = null;
+    if (req.tokenPayload.role !== 2) {
+      id_clinic = req.tokenPayload.id_clinic;
+    }
+
+    return this.userService.read(id_clinic);
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)

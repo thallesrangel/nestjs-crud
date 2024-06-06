@@ -31,8 +31,12 @@ export class UserService {
     });
   }
 
-  async read() {
-    return this.prisma.user.findMany();
+  async read(id_clinic?: number) {
+    const whereClause = id_clinic ? { id_clinic } : {};
+    
+    return this.prisma.user.findMany({
+      where: whereClause,
+    });
   }
 
   async show(id: number) {
