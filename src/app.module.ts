@@ -8,6 +8,7 @@ import { PlaceModule } from './place/place.module';
 import { ServicePasswordModule } from './servicePassword/service-password.module';
 import { servicePasswordGroupModule } from './servicePasswordGroup/service-password-group.module';
 import { ServicePasswordLogModule } from './servicePasswordLog/service-password-log.module';
+import { GatewayModule } from './webSocketGateway/gateway.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { ServicePasswordLogModule } from './servicePasswordLog/service-password-
     forwardRef(() => ServicePasswordModule),
     forwardRef(() => servicePasswordGroupModule),
     forwardRef(() => ServicePasswordLogModule),
-
+    forwardRef(() => GatewayModule),
   ],
   controllers: [AppController],
   providers: [AppService],

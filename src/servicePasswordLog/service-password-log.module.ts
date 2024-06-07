@@ -8,6 +8,8 @@ import { AuthModule } from 'src/auth/auth.module';
 import { ServicePasswordModule } from 'src/servicePassword/service-password.module';
 import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-password-group.module';
 import { PatientModule } from 'src/patient/patient.module';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
+import { GatewayModule } from 'src/webSocketGateway/gateway.module';
 
 @Module({
   imports: [
@@ -20,10 +22,11 @@ import { PatientModule } from 'src/patient/patient.module';
     forwardRef(() => ServicePasswordModule),
     forwardRef(() => servicePasswordGroupModule),
     forwardRef(() => PatientModule),
+    forwardRef(() => GatewayModule),
   ],
 
   controllers: [ServicePasswordLogController],
-  providers: [ServicePasswordServiceLog],
+  providers: [ServicePasswordServiceLog, AppGateway],
   exports: [ServicePasswordServiceLog],
 })
 export class ServicePasswordLogModule {}

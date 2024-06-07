@@ -7,6 +7,8 @@ import { ServicePasswordService } from './service-password.service';
 import { AuthModule } from 'src/auth/auth.module';
 import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-password-group.module';
 import { ServicePasswordLogModule } from 'src/servicePasswordLog/service-password-log.module';
+import { GatewayModule } from 'src/webSocketGateway/gateway.module';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
 
 @Module({
   imports: [
@@ -18,10 +20,11 @@ import { ServicePasswordLogModule } from 'src/servicePasswordLog/service-passwor
     forwardRef(() => AuthModule),
     forwardRef(() => servicePasswordGroupModule),
     forwardRef(() =>  ServicePasswordLogModule),
+    forwardRef(() =>  GatewayModule),
   ],
 
   controllers: [ServicePasswordController],
-  providers: [ServicePasswordService],
+  providers: [ServicePasswordService, AppGateway],
   exports: [ServicePasswordService]
 })
 export class ServicePasswordModule {}

@@ -17,10 +17,16 @@ async function bootstrap() {
       'http://localhost:3000',
       'http://localhost:3002',
     ],
-    methods: ["GET", "POST", "DELETE"],
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
     credentials: true,
   });
 
+
+  app.use((req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    next();
+  });
+  
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3001);
 }

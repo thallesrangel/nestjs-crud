@@ -13,13 +13,11 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
-import { CreateServicePasswordLogDTO } from './dto/create-service-password-log.dto';
 import { ServicePasswordServiceLog } from './service-password-log.service';
-import { ServicePasswordGroupService } from 'src/servicePasswordGroup/service-password-group.service';
 import { ServicePasswordService } from 'src/servicePassword/service-password.service';
-import { PasswordStatus } from '@prisma/client';
 import { PasswordTypeLog } from 'src/enums/service-password-type-log.enum';
 import { PatientService } from 'src/patient/patient.service';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -30,7 +28,7 @@ export class ServicePasswordLogController {
     private readonly servicePasswordService: ServicePasswordService,
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
     private readonly patientService: PatientService,
-    // private readonly servicePasswordGroupService: ServicePasswordGroupService,
+    private readonly appGateway: AppGateway
   ) {}
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -73,7 +71,6 @@ export class ServicePasswordLogController {
       patientId = null;
     }
 
-    
     const createLog = await this.servicePasswordServiceLog.create({
       id_clinic: checkExistsServicePasswordActive.clinic.id,
       id_service_password_group:
@@ -87,8 +84,11 @@ export class ServicePasswordLogController {
     });
 
     if (createLog) {
+      this.appGateway.sendMessageToRoom(checkExistsServicePasswordActive.clinic.id, { action: 'update' });
+
       const id = Number(id_password_service);
       const place = Number(id_place);
+
       // Define um novo id_place para a mesma senha, após criar um log dela e define como "aguardando" = reaproveitamente de senha poŕem vai ser chamado em outro local
       const result =
         await this.servicePasswordService.setStatusAwaitingServiceNewPlace(

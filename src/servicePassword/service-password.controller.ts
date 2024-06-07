@@ -15,10 +15,10 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { CreateServicePasswordDTO } from './dto/create-service-password.dto';
 import { ServicePasswordService } from './service-password.service';
 import { ServicePasswordGroupService } from 'src/servicePasswordGroup/service-password-group.service';
-import { PasswordStatus } from '@prisma/client';
 import { PasswordType } from 'src/enums/service-password-type.enum';
 import { ServicePasswordServiceLog } from 'src/servicePasswordLog/service-password-log.service';
 import { PasswordTypeLog } from 'src/enums/service-password-type-log.enum';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -29,6 +29,7 @@ export class ServicePasswordController {
     private readonly servicePasswordService: ServicePasswordService,
     private readonly servicePasswordGroupService: ServicePasswordGroupService,
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
+    private readonly appGateway: AppGateway
   ) {}
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -117,12 +118,14 @@ export class ServicePasswordController {
         type: finished.type as PasswordTypeLog,
       });
 
+      this.appGateway.sendMessageToRoom(createLog.id_clinic, { action: 'update' });
+
       if (!createLog) {
         throw new BadRequestException(
           'Atendimento encerrado mas não foi possível registrar no histórico.',
         );
       }
-
+      
     return true;
   }
 
@@ -180,6 +183,10 @@ export class ServicePasswordController {
         guiche,
       );
 
+      // atualizar websocket
+      this.appGateway.sendMessageToRoom(id_clinic, { action: 'update' });
+      console.log("atualizar websocket 1");
+
       //TODO colocar status em atendido a senha se não enviado
       //TODO colocar status em atendimento da senha que vai ser a próxima, no caso se tiver preferencial
     } else if (nextNormalPassword) {
@@ -187,6 +194,10 @@ export class ServicePasswordController {
         nextNormalPassword.id,
         guiche,
       );
+
+      // atualizar websocket
+      this.appGateway.sendMessageToRoom(id_clinic, { action: 'update' });
+      console.log("atualizar websocket 2");
 
       //TODO colocar status em atendido as senhas anteriores
       //TODO colocar status em atendimento da senha que vai ser a próxima, no caso se tiver normal
