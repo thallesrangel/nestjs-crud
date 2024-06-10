@@ -18,6 +18,7 @@ import { Roles } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/role.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
+import { UpdateUserDTO } from './dto/update-user.dto';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -61,24 +62,13 @@ export class UserController {
     return this.userService.show(id);
   }
 
-  @Roles(Role.Admin, Role.Manager)
-  @Put(':id')
-  updateTotal(@Body() body, @Param() param) {
-    return {
-      method: 'Put',
-      body,
-      param,
-    };
-  }
-
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Patch(':id')
-  updatePartial(@Body() body, @Param() param) {
-    return {
-      method: 'Patch',
-      body,
-      param,
-    };
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDTO,
+  ) {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Roles(Role.Admin, Role.Manager)
