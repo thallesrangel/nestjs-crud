@@ -18,6 +18,7 @@ import { Role } from 'src/enums/role.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { CreatePlaceDTO } from './dto/create-place.dto';
+import { UpdatePlaceDto } from './dto/update-place.dto';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -47,5 +48,10 @@ export class PlaceController {
   delete(@Param('id', ParseIntPipe) id: number) {
 
     return this.placeService.delete(id);
+  }
+
+  @Patch(':id')
+  async update(@Param('id', ParseIntPipe) id: number, @Body() updatePlaceDto: UpdatePlaceDto) {
+    return this.placeService.update(id, updatePlaceDto);
   }
 }

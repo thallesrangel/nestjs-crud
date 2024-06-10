@@ -97,8 +97,14 @@ export class ServicePasswordController {
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('finish')
   async finishPassword(@Body() { id_password_service }) {
-    const finished =
-      await this.servicePasswordService.setStatusServiced(id_password_service);
+
+    if (!id_password_service) {
+      throw new BadRequestException(
+        'Não há atendimento para ser encerrada.',
+      );
+    }
+
+    const finished = await this.servicePasswordService.setStatusServiced(id_password_service);
 
       if (!finished) {
         throw new BadRequestException(
