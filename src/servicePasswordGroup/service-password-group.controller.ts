@@ -6,6 +6,7 @@ import { Role } from 'src/enums/role.enum';
 import { RoleGuard } from 'src/guards/role.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { ResetServicePasswordGroupDTO } from './dto/reset-service-password-group.dto';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -14,6 +15,7 @@ import { ResetServicePasswordGroupDTO } from './dto/reset-service-password-group
 export class ServicePasswordGroupController {
   constructor(
     private readonly servicePasswordGroupService: ServicePasswordGroupService,
+    private readonly appGateway: AppGateway
   ) {}
 
   // @Roles(Role.Admin, Role.Manager, Role.User)
@@ -28,6 +30,13 @@ export class ServicePasswordGroupController {
 
     const id_clinic = req.tokenPayload.id_clinic;
 
-    return this.servicePasswordGroupService.reset({ id_clinic });
+    const result = this.servicePasswordGroupService.reset({ id_clinic });
+
+    if (!result) {
+    }
+    
+    this.appGateway.sendMessageToRoom(id_clinic, { action: 'update' });
+
+    return true;
   }
 }

@@ -5,6 +5,8 @@ import { ServicePasswordGroupService } from './service-password-group.service';
 import { ServicePasswordGroupController } from './service-password-group.controller';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserModule } from 'src/user/user.module';
+import { GatewayModule } from 'src/webSocketGateway/gateway.module';
+import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
 
 @Module({
   imports: [
@@ -14,9 +16,10 @@ import { UserModule } from 'src/user/user.module';
     forwardRef(() => UserModule),
     PrismaModule,
     forwardRef(() => AuthModule),
+    forwardRef(() =>  GatewayModule),
   ],
   controllers: [ServicePasswordGroupController],
-  providers: [ServicePasswordGroupService],
+  providers: [ServicePasswordGroupService, AppGateway],
   exports: [ServicePasswordGroupService]
 })
 export class servicePasswordGroupModule {}

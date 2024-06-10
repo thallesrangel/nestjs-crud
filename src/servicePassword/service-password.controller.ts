@@ -95,6 +95,19 @@ export class ServicePasswordController {
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)
+  @Post('being_served_by_clinic')
+  async beingServedByClinic(@Req() req) {
+    const id_clinic = req.tokenPayload.id_clinic;
+
+    const senhaAtualEmAtendimento =
+      await this.servicePasswordService.getAtualSenhaEmAtendimentoByClinic(
+        Number(id_clinic),
+      );
+
+    return senhaAtualEmAtendimento;
+  }
+
+  @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('finish')
   async finishPassword(@Body() { id_password_service }) {
 
@@ -124,14 +137,15 @@ export class ServicePasswordController {
         type: finished.type as PasswordTypeLog,
       });
 
-      this.appGateway.sendMessageToRoom(createLog.id_clinic, { action: 'update' });
-
       if (!createLog) {
         throw new BadRequestException(
           'Atendimento encerrado mas não foi possível registrar no histórico.',
         );
       }
-      
+
+      this.appGateway.sendMessageToRoom(createLog.id_clinic, { action: 'update' });
+
+
     return true;
   }
 

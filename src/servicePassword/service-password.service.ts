@@ -146,6 +146,34 @@ export class ServicePasswordService {
     return record;
   }
 
+  // #TODO futuramente precisamos uisar apenas getAtualSenhaEmAtendimento e indicar no panel o local, para buscar o atendimento por local.
+  async getAtualSenhaEmAtendimentoByClinic(id_clinic: number) {
+    const record = await this.prisma.servicePassword.findFirst({
+      where: {
+        id_clinic,
+        servicePasswordGroup: {
+          deleted: false,
+        },
+        status: PasswordStatus.em_atendimento
+      },
+      include: {
+        patient: true,
+        clinic: true,
+        servicePasswordGroup: true,
+        place: true
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    });
+  
+    if (!record) {
+      return false;
+    }
+  
+    return record;
+  }
+
   async setStatusAwaitingServiceNewPlace(id_password_service, id_place) {
     return await this.prisma.servicePassword.update({
       where: {
