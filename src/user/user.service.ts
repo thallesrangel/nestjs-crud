@@ -8,9 +8,15 @@ import { UpdateUserDTO } from './dto/update-user.dto';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create({ id_clinic, name, email, password, role, guiche }: CreateUserDTO) {
-
-    password = await bycrypt.hash(password, await bycrypt.genSalt())
+  async create({
+    id_clinic,
+    name,
+    email,
+    password,
+    role,
+    guiche,
+  }: CreateUserDTO) {
+    password = await bycrypt.hash(password, await bycrypt.genSalt());
 
     return await this.prisma.user.create({
       data: {
@@ -34,15 +40,14 @@ export class UserService {
 
   async read(id_clinic?: number) {
     const whereClause = id_clinic ? { id_clinic } : {};
-    
+
     return this.prisma.user.findMany({
       where: whereClause,
     });
   }
 
   async show(id: number) {
-
-    await this.existis(id)
+    await this.existis(id);
 
     return await this.prisma.user.findUnique({
       where: {
@@ -60,11 +65,13 @@ export class UserService {
   }
 
   async existis(id: number) {
-    if (!(await this.prisma.user.count({
-      where: {
-        id
-      }
-    }))) {
+    if (
+      !(await this.prisma.user.count({
+        where: {
+          id,
+        },
+      }))
+    ) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
@@ -80,6 +87,13 @@ export class UserService {
   }
 
   async update(userId: number, updateUserDTO: UpdateUserDTO) {
+    if (updateUserDTO.password) {
+      updateUserDTO.password = await bycrypt.hash(
+        updateUserDTO.password,
+        await bycrypt.genSalt(),
+      );
+    }
+
     return this.prisma.user.update({
       where: { id: userId },
       data: updateUserDTO,
