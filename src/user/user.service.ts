@@ -88,7 +88,6 @@ export class UserService {
 
   async update(userId: number, updateUserDTO: UpdateUserDTO) {
     if (updateUserDTO.password) {
-      console.log("oi")
       updateUserDTO.password = await bycrypt.hash(
         updateUserDTO.password,
         await bycrypt.genSalt(),
