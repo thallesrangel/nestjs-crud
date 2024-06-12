@@ -98,6 +98,17 @@ export class ServicePasswordService {
     });
   }
 
+  async setStatusEmAtendimentoByPasswordId(id: number) {
+    return await this.prisma.servicePassword.update({
+      where: {
+        id
+      },
+      data: {
+        status: PasswordStatus.em_atendimento
+      },
+    });
+  }
+
   async setStatusEmAtendimento(id: number, guiche: string) {
     return await this.prisma.servicePassword.update({
       where: {
@@ -136,6 +147,9 @@ export class ServicePasswordService {
         clinic: true,
         servicePasswordGroup: true,
         place: true
+      },
+      orderBy: {
+        updated_at: 'desc'
       }
     });
   
@@ -163,7 +177,7 @@ export class ServicePasswordService {
         place: true
       },
       orderBy: {
-        created_at: 'desc',
+        updated_at: 'desc',
       },
     });
   
@@ -174,7 +188,7 @@ export class ServicePasswordService {
     return record;
   }
 
-  async setStatusAwaitingServiceNewPlace(id_password_service, id_place) {
+  async setStatusAwaitingServiceNewPlace(id_password_service, id_place, id_patient) {
     return await this.prisma.servicePassword.update({
       where: {
         id: id_password_service,
@@ -182,6 +196,7 @@ export class ServicePasswordService {
       data: {
         id_place: id_place,
         status: PasswordStatus.aguardando,
+        id_patient
       },
     });
   }

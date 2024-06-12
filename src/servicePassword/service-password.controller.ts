@@ -29,7 +29,7 @@ export class ServicePasswordController {
     private readonly servicePasswordService: ServicePasswordService,
     private readonly servicePasswordGroupService: ServicePasswordGroupService,
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
-    private readonly appGateway: AppGateway
+    private readonly appGateway: AppGateway,
   ) {}
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -110,41 +110,67 @@ export class ServicePasswordController {
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('finish')
   async finishPassword(@Body() { id_password_service }) {
-
     if (!id_password_service) {
+      throw new BadRequestException('Não há atendimento para ser encerrada.');
+    }
+
+    const finished =
+      await this.servicePasswordService.setStatusServiced(id_password_service);
+
+    if (!finished) {
       throw new BadRequestException(
-        'Não há atendimento para ser encerrada.',
+        'Não foi possível encerrar o atendimento. Tente novamente',
       );
     }
 
-    const finished = await this.servicePasswordService.setStatusServiced(id_password_service);
+    const createLog = await this.servicePasswordServiceLog.create({
+      id_clinic: finished.id_clinic,
+      id_service_password_group: finished.id_service_password_group,
+      id_service_password: finished.id,
+      id_patient: finished.id_patient,
+      id_place: finished.id_place,
+      guiche: finished.guiche,
+      number: finished.number,
+      type: finished.type as PasswordTypeLog,
+    });
 
-      if (!finished) {
-        throw new BadRequestException(
-          'Não foi possível encerrar o atendimento. Tente novamente',
-        );
-      }
-      
-      const createLog = await this.servicePasswordServiceLog.create({
-        id_clinic: finished.id_clinic,
-        id_service_password_group:
-        finished.id_service_password_group,
-        id_service_password: finished.id,
-        id_patient: finished.id_patient,
-        id_place: finished.id_place,
-        guiche: finished.guiche,
-        number: finished.number,
-        type: finished.type as PasswordTypeLog,
-      });
+    if (!createLog) {
+      throw new BadRequestException(
+        'Atendimento encerrado mas não foi possível registrar no histórico.',
+      );
+    }
 
-      if (!createLog) {
-        throw new BadRequestException(
-          'Atendimento encerrado mas não foi possível registrar no histórico.',
-        );
-      }
+    this.appGateway.sendMessageToRoom(createLog.id_clinic, {
+      action: 'update',
+    });
 
-      this.appGateway.sendMessageToRoom(createLog.id_clinic, { action: 'update' });
+    return true;
+  }
 
+  @Roles(Role.Admin, Role.Manager, Role.User)
+  @Post('call_again_password')
+  async callAgainPassword(@Body() { id_password_service }) {
+
+    if (!id_password_service) {
+      throw new BadRequestException(
+        'Não há atendimento para ser novamente chamado.',
+      );
+    }
+
+    const callAgain =
+      await this.servicePasswordService.setStatusEmAtendimentoByPasswordId(
+        id_password_service,
+      );
+
+    if (!callAgain) {
+      throw new BadRequestException(
+        'Não foi possível chamar a senha novamente. Tente novamente',
+      );
+    }
+
+    this.appGateway.sendMessageToRoom(callAgain.id_clinic, {
+      action: 'update',
+    });
 
     return true;
   }
@@ -183,8 +209,6 @@ export class ServicePasswordController {
       }
     });
 
-    //////////////////////////////////////////////////////////////////////////
-
     const senhaAtualEmAtendimento =
       await this.servicePasswordService.getAtualSenhaEmAtendimento(
         Number(id_clinic),
@@ -203,9 +227,7 @@ export class ServicePasswordController {
         guiche,
       );
 
-      // atualizar websocket
       this.appGateway.sendMessageToRoom(id_clinic, { action: 'update' });
-      console.log("atualizar websocket 1");
 
       //TODO colocar status em atendido a senha se não enviado
       //TODO colocar status em atendimento da senha que vai ser a próxima, no caso se tiver preferencial
@@ -215,9 +237,7 @@ export class ServicePasswordController {
         guiche,
       );
 
-      // atualizar websocket
       this.appGateway.sendMessageToRoom(id_clinic, { action: 'update' });
-      console.log("atualizar websocket 2");
 
       //TODO colocar status em atendido as senhas anteriores
       //TODO colocar status em atendimento da senha que vai ser a próxima, no caso se tiver normal
@@ -229,29 +249,16 @@ export class ServicePasswordController {
     return true;
   }
 
+  // Fluxo, inicial de gereciamento de senhas
+  // Clica em chamar próximo, até o momento não exibe nenhuma senha, ele busca na lista e coloca a atual como em atendimento
+  // Você não tem como Chamar o próximo sem direcionar ou encerrar atendimento da senha atual
+  // Quando chamamos o próximo, ele passa a ser EM ATENDIMENTO
 
-// ESTADO: AGUARDANDO / EM ATENDIMENTO/ ATENDIDO
+  // Você precisa definir o setor para enviar a senha (direcionar)
 
-// Fluxo, inicial de gereciamento de senhas
-// Clica em chamar próximo, até o momento não exibe nenhuma senha, ele busca na lista e coloca a atual como em atendimento
-// Você não tem como Chamar o próximo sem direcionar ou encerrar atendimento da senha atual
-// Quando chamamos o próximo, ele passa a ser EM ATENDIMENTO
-
-// Você precisa definir o setor para enviar a senha (direcionar)
-
-// Se eu encerrar o atendimento, vira ATENDIDO
-// Se eu NÃO direcionar o paciente e clicar em chamar pŕoximo, vira ATENDIDO
-// Se eu direcionar a senha, ele volta para AGUARDANDO só que com o ID do place novo, com updated_at E preenche a tabela password_service_log com os dados anteriores que fica sendo o histórico de chamadas
-
-
-
-
-
-
-
-
-
-
+  // Se eu encerrar o atendimento, vira ATENDIDO
+  // Se eu NÃO direcionar o paciente e clicar em chamar pŕoximo, vira ATENDIDO
+  // Se eu direcionar a senha, ele volta para AGUARDANDO só que com o ID do place novo, com updated_at E preenche a tabela password_service_log com os dados anteriores que fica sendo o histórico de chamadas
 
   // @Roles(Role.Admin, Role.Manager, Role.User)
   // @Post('count_awaiting_for_service_by_place')
@@ -271,4 +278,3 @@ export class ServicePasswordController {
   //   return allPasswordsAwaitingService;
   // }
 }
-

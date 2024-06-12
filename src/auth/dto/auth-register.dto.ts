@@ -2,7 +2,7 @@ import { IsEmail, IsEnum, IsOptional, IsString, MinLength, IsNumber } from "clas
 import { Role } from "src/enums/role.enum";
 
 export class AuthRegisterDTO {
-    @IsOptional()
+    @IsOptional({ message: 'O nome da clínica deve ser uma string.' })
     @IsString()
     clinic_name?: string;
 
@@ -17,7 +17,7 @@ export class AuthRegisterDTO {
     email: string;
 
     @IsString()
-    @MinLength(6)
+    @MinLength(6, { message: 'A senha deve possuir 6 caracteres.' })
     password: string;
 
     @IsOptional()

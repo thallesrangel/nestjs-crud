@@ -118,6 +118,13 @@ export class AuthService {
   }
 
   async register(data: AuthRegisterDTO) {
+
+    const existingUser = await this.userService.findByEmail(data.email);
+    
+    if (existingUser) {
+      throw new BadRequestException('O e-mail já está em uso.');
+    }
+
     return await this.userService.create(data);
   }
 

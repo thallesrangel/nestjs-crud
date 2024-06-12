@@ -94,6 +94,7 @@ export class ServicePasswordLogController {
         await this.servicePasswordService.setStatusAwaitingServiceNewPlace(
           id,
           place,
+          patientId,
         );
 
       if (!result) {
