@@ -84,7 +84,6 @@ export class ServicePasswordController {
   @Post('being_served_by_place')
   async beingServed(@Body() { id_place }, @Req() req) {
     const id_clinic = req.tokenPayload.id_clinic;
-
     const senhaAtualEmAtendimento =
       await this.servicePasswordService.getAtualSenhaEmAtendimento(
         Number(id_clinic),
@@ -103,6 +102,13 @@ export class ServicePasswordController {
       await this.servicePasswordService.getAtualSenhaEmAtendimentoByClinic(
         Number(id_clinic),
       );
+
+    // Se não existir senha em atendimento, simplismente pega a última senha do log e exibe.
+    if (!senhaAtualEmAtendimento) {
+      return await this.servicePasswordServiceLog.getLastInsertedByClinicId(
+        Number(id_clinic),
+      );
+    }
 
     return senhaAtualEmAtendimento;
   }
@@ -150,7 +156,6 @@ export class ServicePasswordController {
   @Roles(Role.Admin, Role.Manager, Role.User)
   @Post('call_again_password')
   async callAgainPassword(@Body() { id_password_service }) {
-
     if (!id_password_service) {
       throw new BadRequestException(
         'Não há atendimento para ser novamente chamado.',

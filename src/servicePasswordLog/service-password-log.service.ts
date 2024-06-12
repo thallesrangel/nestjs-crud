@@ -4,7 +4,26 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class ServicePasswordServiceLog {
   constructor(private readonly prisma: PrismaService) {}
-  
+
+  async getLastInsertedByClinicId(id_clinic: number) {
+    return await this.prisma.servicePasswordLog.findFirst({
+      where: {
+        id_clinic,
+        deleted: false,
+        servicePasswordGroup: {
+          deleted: false,
+        },
+      },
+      include: {
+        patient: true,
+        place: true,
+      },
+      orderBy: {
+        id: 'desc',
+      },
+    });
+  }
+
   async getAllByClinicId(id_clinic: number) {
     return await this.prisma.servicePasswordLog.findMany({
       where: {
@@ -21,7 +40,7 @@ export class ServicePasswordServiceLog {
       orderBy: {
         id: 'desc',
       },
-      take: 5
+      take: 5,
     });
   }
 
@@ -35,7 +54,6 @@ export class ServicePasswordServiceLog {
     number,
     type,
   }) {
-
     const data = {
       number,
       type,
@@ -52,7 +70,7 @@ export class ServicePasswordServiceLog {
     }
 
     return await this.prisma.servicePasswordLog.create({
-      data: data as any
+      data: data as any,
     });
   }
 }
