@@ -9,6 +9,7 @@ import { servicePasswordGroupModule } from 'src/servicePasswordGroup/service-pas
 import { ServicePasswordLogModule } from 'src/servicePasswordLog/service-password-log.module';
 import { GatewayModule } from 'src/webSocketGateway/gateway.module';
 import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
+import { GeneratePdfService } from 'src/generatePdf/generate-pdf.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
   ],
 
   controllers: [ServicePasswordController],
-  providers: [ServicePasswordService, AppGateway],
+  providers: [ServicePasswordService, AppGateway, GeneratePdfService],
   exports: [ServicePasswordService]
 })
 export class ServicePasswordModule {}

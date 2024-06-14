@@ -5,6 +5,7 @@ import {
   Get,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 
@@ -19,6 +20,10 @@ import { PasswordType } from 'src/enums/service-password-type.enum';
 import { ServicePasswordServiceLog } from 'src/servicePasswordLog/service-password-log.service';
 import { PasswordTypeLog } from 'src/enums/service-password-type-log.enum';
 import { AppGateway } from 'src/webSocketGateway/web-socket-gateway.gateway';
+import { GeneratePdfService } from 'src/generatePdf/generate-pdf.service';
+import * as path from 'path';
+import * as fs from 'fs'; // Importa o módulo fs padrão
+import { promises as fsp } from 'fs';
 
 // AuthGuard verifica se está autenticado
 // Role verifica a permissão
@@ -30,6 +35,7 @@ export class ServicePasswordController {
     private readonly servicePasswordGroupService: ServicePasswordGroupService,
     private readonly servicePasswordServiceLog: ServicePasswordServiceLog,
     private readonly appGateway: AppGateway,
+    private readonly serviceGeneratePdf: GeneratePdfService
   ) {}
 
   @Roles(Role.Admin, Role.Manager, Role.User)
@@ -37,6 +43,7 @@ export class ServicePasswordController {
   async create(
     @Body() { id_patient, id_place, type }: CreateServicePasswordDTO,
     @Req() req,
+    @Res() res,
   ) {
     const id_clinic = req.tokenPayload.id_clinic;
 
@@ -70,7 +77,7 @@ export class ServicePasswordController {
       var nextPasswordNumber = 1;
     }
 
-    return this.servicePasswordService.create({
+    const password = await this.servicePasswordService.create({
       id_service_password_group: servicePasswordGroupId,
       id_clinic: Number(id_clinic),
       id_patient: id_patient ?? null,
@@ -78,6 +85,21 @@ export class ServicePasswordController {
       number: nextPasswordNumber,
       type,
     });
+
+    if (password) {
+      try {
+        const fileName = await this.serviceGeneratePdf.createPasswordPDF(password);
+  
+        // Constrói a URL pública do PDF
+        const publicUrl = `/pdf/download/${fileName}`;
+  
+        // Retorna a URL do PDF em JSON
+        res.json({ url: publicUrl });
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        res.status(500).send('Error generating PDF');
+      }
+    }
   }
 
   @Roles(Role.Admin, Role.Manager, Role.User)

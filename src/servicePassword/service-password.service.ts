@@ -34,6 +34,8 @@ export class ServicePasswordService {
         id_clinic: true,
         id_patient: true,
         id_place: true,
+        place: true,
+        clinic: true,
         number: true,
         type: true,
         status: true,
