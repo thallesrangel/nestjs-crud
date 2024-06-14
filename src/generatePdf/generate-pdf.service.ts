@@ -8,7 +8,7 @@ import * as path from 'path';
 export class GeneratePdfService {
   async createPasswordPDF(data: any): Promise<string> {
     const fileName = `password_${Date.now()}.pdf`;
-    const filePath = path.join(__dirname, '..', '..', 'pdf', 'download', fileName); // Ajuste o caminho conforme necessário
+    const filePath = path.join(__dirname, '..', '..', 'public', 'passwords', fileName); // Ajuste o caminho conforme necessário
 
     return new Promise((resolve, reject) => {
       try {

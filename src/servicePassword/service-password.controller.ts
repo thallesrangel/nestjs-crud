@@ -90,14 +90,12 @@ export class ServicePasswordController {
       try {
         const fileName = await this.serviceGeneratePdf.createPasswordPDF(password);
   
-        // Constrói a URL pública do PDF
-        const publicUrl = `/pdf/download/${fileName}`;
+        const publicUrl = `/public/passwords/${fileName}`;
   
-        // Retorna a URL do PDF em JSON
         res.json({ url: publicUrl });
       } catch (error) {
-        console.error('Error generating PDF:', error);
-        res.status(500).send('Error generating PDF');
+        console.error('Erro ao gerar PDF:', error);
+        res.status(500).send('Erro ao gerar PDF');
       }
     }
   }
